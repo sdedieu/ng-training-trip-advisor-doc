@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Formation Angular expert by Kaizen - Sylvain DEDIEU</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="Description">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs/styles/atom-one-light.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="./style/style.css">
+
+</head>
+
+<body class="ready">
+
+    <main>
+        <aside class="sidebar">
+            <div class="sidebar-nav">
+                <p>&nbsp;</p>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="00_getting_started.html">Pour commencer</a></li>
+                    <li><a href="01_libs_and_monorepo.html">Libs et Monorepos</a></li>
+                    <li><a href="02_module_federation.html">Microfrontends avec Module Federation</a></li>
+                    <li><a href="03_RxJs.html">Reactive Architectures with RxJS</a></li>
+                    <li><a href="04a_ngrx_store.html">NGRX Store</a></li>
+                    <li><a href="04b_selectors.html">NGRX Selectors</a></li>
+                    <li><a href="04c_ngrx_effects.html">NGRX Effects</a></li>
+                    <li><a href="04d_ngrx_entities.html">NGRX Entities</a></li>
+                    <li><a href="05_standalone_components.html">Composants Standalone</a></li>
+                    <li><a href="06_performance.html">Performances</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <section class="content">
+            <article class="markdown-section" id="main">
+
+                <h1 id="mf-with-module-federation">Microfrontends avec Module Federation</h1>
+
+                <p>Le terme <i>MicroFrontends</i> est apparu pour la première fois dans <a
+                        href="https://www.thoughtworks.com/radar">ThoughtWorks Technology Radar</a> à la fin de 2016. Il
+                    étend les concepts de <i>micro-services</i> au monde du FrontEnd (désigne les éléments que l’on voit
+                    à l’écran et avec lesquels on peut interagir). </p>
+
+                <p>Le <i>MicroFrontends</i> est donc une architecture particulière pour une application frontend qui a
+                    pour but d'assembler plusieurs modules d'applications différentes pour former ensemble une seule et
+                    même application.</p>
+
+                <p>L’idée derrière <i>MicroFrontends</i> est de penser à un site web ou une application web comme une
+                    composition de fonctionnalités qui appartiennent à des équipes indépendantes. Chaque équipe a un
+                    domaine d’activité ou une mission qui lui est propre et dans lequel elle se spécialise. Une équipe
+                    est interfonctionnelle et développe ses fonctionnalités de bout en bout, de la base de données à
+                    l’interface utilisateur.</p>
+
+                <p><a href="https://webpack.js.org/">Webpack</a> est un <i>modules bundler</i> open source. Son objectif
+                    principal est de regrouper des fichiers JavaScript pour les utiliser dans un navigateur. Cet outil
+                    est également capable de transformer, regrouper ou empaqueter à peu près n’importe quelle ressource.
+                </p>
+
+                <p>Dans sa version 5, Webpack apporte un nouveau plugin appelé <a
+                        href="https://webpack.js.org/concepts/module-federation/">Module Federation</a>, celui-ci permet
+                    d'assembler des fichiers et modules "distants", est-à-dire exposés sur une autre machine.</p>
+
+                <ul>
+                    <li><a href="#mf-with-module-federation">Microfrontends avec Module Federation</a>
+                        <ul>
+                            <li><a href="#configure-module-federation">Activer et configurer Module Federation</a>
+                                <ul>
+                                    <li><a href="#configure-module-federation-mf">Activer et configurer Module
+                                            Federation dans l'application microfront (remote)</a>
+                                    <li><a href="#configure-module-federation-shell">Activer et configurer Module
+                                            Federation dans l'application hôte (shell)</a>
+                                </ul>
+                            <li><a href="#use-module-federation">Utiliser Module Federation</a>
+                                <ul>
+                                    <li><a href="#use-angular-architect-tools">Utiliser les méthodes fournie par la
+                                            librarie @angular-architects/module-federation</a>
+                                    <li><a href="#use-nx-tools">Utiliser les méthodes fournie par la cli Nx</a>
+                                </ul>
+                        </ul>
+                    </li>
+                </ul>
+                <h2 id="configure-module-federation">Activer et configurer Module Federation</h2>
+                <p>Dans cette partie, nous allons installer et configurer le <i>plugin</i> <i>Module Federation</i>, qui
+                    permet de mettre en place
+                    une architecture <i>microfrontends</i>. </p>
+
+                <p>Pour cela, nous allons commencer pour démarrer le <i>microfront</i> <code>hotel</code> avec la
+                    commande <code>nx serve hotel --port 4201</code>.</p>
+                <p>Le but va être d'intégrer cette page fonctionnelle à l'application <code>trip-kaizen-sor</code> sur
+                    la route <code>'/hotels'</code>.<br>
+                    On parle ici d'architecture en <i>vertical split</i>, car une route correspond à un
+                    <i>microfront</i>. <br>
+                    Il existe aussi l'architecture en <i>horizontal split</i>, où plusieurs <i>microfrontends</i>
+                    cohabitent sur la même page.
+                </p>
+                </p>
+                <p>Pour simplifier notre travail, nous allons utiliser une <i>librairie npm</i> <a
+                        href="https://www.npmjs.com/package/@angular-architects/module-federation">@angular-architects/module-federation</a>.
+                </p>
+
+                <h3 id="configure-module-federation-mf">Activer et configurer Module Federation dans l'application
+                    microfront (remote)</h3>
+                <p>
+                    Vous pouvez suivre ces étapes :
+                </p>
+                <ol>
+                    <li>
+                        <p>
+                            Installer la librairie
+                        </p>
+                        <p>
+                            Se placer à la racine du monorepo et exécuter les commandes: <br>
+                            <code>npm install @angular-architects/module-federation</code><br>
+                            <code>npx nx g @angular-architects/module-federation:ng-add --project=hotel</code>
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Prenez le temps de parcourir l'ensemble des fichiers qui ont été modifié par ces commandes.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Ouvrez le fichier <code>webpack.config.js</code>.<br>
+                            Dans la section <code>plugins</code>, on peut voir la déclaration du <i>plugin</i>
+                            <code>ModuleFederationPlugin</code> qui possède plusieurs champs pré-remplis (<a
+                                href="https://webpack.js.org/plugins/module-federation-plugin/#options">doc</a>).<br>
+                        </p>
+                        <p>
+                            Décommentez la partie <code>For remotes</code> et
+                            exposez le <i>module</i> <code>HotelBookingModule</code> sous la route
+                            <code>'/module'</code>.<br>
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+plugins: [
+    <span class="hljs-keyword">new</span> ModuleFederationPlugin({
+        library: { type: <span class="hljs-built_in">"module"</span> },
+
+        <span class="hljs-string">// For remotes (please adjust)</span>
+        name: <span class="hljs-built_in">"hotel"</span>,
+        filename: <span class="hljs-built_in">"remoteEntry.js"</span>,
+        exposes: {
+            <span class="hljs-built_in">'./module'</span>: <span class="hljs-built_in">'./apps/hotel/src/app/hotel-booking/hotel-booking.module.ts'</span>,
+        },        
+        
+        <span class="hljs-string">// For hosts (please adjust)</span>
+        <span class="hljs-string">// remotes: {</span>
+        <span class="hljs-string">//     "tripKaizenSor": "http://localhost:4200/remoteEntry.js",</span>
+
+        <span class="hljs-string">// },</span>
+
+        shared: share({
+            <span class="hljs-built_in">"@angular/core"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
+            <span class="hljs-built_in">"@angular/common"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
+            <span class="hljs-built_in">"@angular/common/http"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
+            <span class="hljs-built_in">"@angular/router"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> },
+
+        ...sharedMappings.getDescriptors()
+        })
+    
+    }),
+    </code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            Redémarrez l'application <code>hotel</code> avec la commande
+                            <code>nx serve hotel</code>.<br>
+                            Dans l'URL, changez la route <code>'/hotels'</code> par <code>'/remoteEntry.js'</code>, vous
+                            devez observer les lignes de code <i>JavaScript</i> générés par <i>Webpack</i>, qui exposent
+                            le fichier <code>hotel-booking.module.ts</code> sur la route <code>'/module</code>.
+                        </p>
+                        <pre><code class="language-typescript">
+var moduleMap = {
+    "./module": () => {
+        return __webpack_require__.e("apps_hotel_src_app_hotel-booking_hotel-booking_module_ts-_6ca50").then(() => (() => ((__webpack_require__(/*! ./apps/hotel/src/app/hotel-booking/hotel-booking.module.ts */ 3136)))));
+    }
+};
+                        </code>
+                    </li>
+                </ol>
+                <h3 id="configure-module-federation-shell">Activer et configurer Module Federation dans l'application
+                    hôte (shell)</h3>
+                    <p>
+                        Vous pouvez suivre ces étapes :
+                    </p>
+                    <ol>
+                        <li>
+                            <p>
+                                Installer la librairie
+                            </p>
+                            <p>
+                                Se placer à la racine du monorepo et exécuter la commande: <br>
+                                <code>npx nx g @angular-architects/module-federation:ng-add --project=trip-kaizen-sor</code>
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                Ouvrez le fichier <code>webpack.config.js</code>.<br>
+                                Décommentez la partie <code>For hosts</code> et déclarez <code>hotel-booking</code> comme remote avec la clef <code>hotelbooking</code> et en valeur, l'URL vers le fichier <code>remoteEntry.js</code> du <i>microfront</i>.<br>                         
+                            </p>
+                            <details>
+                                <summary>Solution</summary>
+                                <p>
+                                <pre><code class="language-typescript">
+    plugins: [
+        <span class="hljs-keyword">new</span> ModuleFederationPlugin({
+            library: { type: <span class="hljs-built_in">"module"</span> },
+    
+            <span class="hljs-string">// For remotes (please adjust)</span>
+            <span class="hljs-string">//name:"hotel"</span>
+            <span class="hljs-string">//filename:"remoteEntry.js",</span>
+            <span class="hljs-string">//exposes: {</span>
+            <span class="hljs-string">    './Component' :'./apps/hotel/src/app/app.component.ts',</span>
+            <span class="hljs-string">//}, </span>       
+            
+            <span class="hljs-string">// For hosts (please adjust)</span>
+            remotes: {
+                <span class="hljs-built_in">"hotelbooking"</span>: <span class="hljs-built_in">"http://localhost:4201/remoteEntry.js"</span>
+            },
+    
+            shared: share({
+                <span class="hljs-built_in">"@angular/core"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
+                <span class="hljs-built_in">"@angular/common"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
+                <span class="hljs-built_in">"@angular/common/http"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
+                <span class="hljs-built_in">"@angular/router"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> },
+    
+            ...sharedMappings.getDescriptors()
+            })
+        
+        }),
+        </code></pre>
+                        </p>
+                        </details>
+                    </li>
+                </ol>
+                <h2 id="use-module-federation">Utiliser Module Federation</h2>
+                <p>La configuration étant prête, nous allons voir dans ce chapitre comment faire apparaitre note
+                    <i>microfront</i> dans notre application <i>hôte (shell)</i>. <br>
+                    L'idée étant qu'à l'utilisation, l'experience de la <a
+                        href="https://fr.wikipedia.org/wiki/Application_web_monopage">single page application</a> soit
+                    préservée.
+                </p>
+                <p>
+                    Pour cela, vous pouvez suivre ces étapes :
+                </p>
+                <ol>
+                    <li>
+                        <p>
+                            Dans le fichier <code>trip-kaizen-sor/src/app/routes.ts</code> ajoutez une route avec pour
+                            <code>path</code> <code>hotels</code> et pour <code>loadChildren</code> le même contenu que
+                            pour un <i>lazy load</i> classique d'un <i>module</i> Angular
+                            avec pour <code>import</code> la valeur <code>'hotelbooking/module'</code>.<br>
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">export const</span> APP_ROUTES: Route[] = [
+    {
+        path: <span class="hljs-built_in">'home'</span>,
+        loadChildren: () => <span class="hljs-keyword">import</span>(<span class="hljs-built_in">'./home/home.module'</span>).then(m => m.HomeModule)
+    },
+    {
+        path: <span class="hljs-built_in">'restaurants'</span>,
+        loadChildren: () => <span class="hljs-keyword">import</span>(<span class="hljs-built_in">'./restaurant-reviewing/restaurant-reviewing.module'</span>).then(m => m.RestaurantReviewingModule)
+    },
+    {
+        path: <span class="hljs-built_in">'hotels'</span>,
+        loadChildren: () => <span class="hljs-keyword">import</span>(<span class="hljs-built_in">'hotelbooking/module'</span>).then(m => m.HotelBookingModule)
+    },
+    {
+        path: <span class="hljs-built_in">''</span>,
+        redirectTo: <span class="hljs-built_in">'home'</span>,
+        pathMatch: <span class="hljs-built_in">'full'</span>
+    }
+];                                   
+                                </code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            Le fichier <code>trip-kaizen-sor/src/app/routes.ts</code> doit être en erreur car
+                            <i>typescript</i> ne reconnait pas de module <code>'hotelbooking/module'</code>.<br>
+                            Pour corriger cela, vous devez ajouter un fichier <code>decl.d.ts</code> dans le dossier
+                            <code>src</code> et déclarer dedans le module manquant
+                            (<code>declare module 'hotelbooking/module'</code>).
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Dans le fichier <code>trip-kaizen-sor/src/app/side-nav/side-nav.component.ts</code> ajoutez
+                            un <code>NavLink</code> avec pour
+                            <code>name</code> <code>'Hotels'</code>, pour <code>link</code> <code>'/hotels'</code> et
+                            pour <code>icon</code> <code>'hotel'</code>.
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+navItems: NavLink[] = [
+    {
+      name: <span class="hljs-built_in">'Home'</span>,
+      link: <span class="hljs-built_in">'/home'</span>,
+      icon: <span class="hljs-built_in">'home'</span>,
+    },
+    {
+      name: <span class="hljs-built_in">'Restaurants'</span>,
+      link: <span class="hljs-built_in">'/restaurants'</span>,
+      icon: <span class="hljs-built_in">'restaurant'</span>,
+    },
+    {
+      name: <span class="hljs-built_in">'Hotels'</span>,
+      link: <span class="hljs-built_in">'/hotels'</span>,
+      icon: <span class="hljs-built_in">'hotel'</span>,
+    }
+  ];
+                                </code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            Sur la route <a href="http://localhost:4200/hotels">http://localhost:4200/hotels</a>, le
+                            <i>microfront</i> doit maintenant s'afficher.
+                        </p>
+                    </li>
+                </ol>
+                <h3 id="use-angular-architect-tools">Utiliser les méthodes fournie par la librarie
+                    @angular-architects/module-federation</h3>
+                <br>
+                La librairie <a
+                    href="https://www.npmjs.com/package/@angular-architects/module-federation">@angular-architects/module-federation</a>
+                fournit un certain nombre de méthodes qui permettent de faciliter l'écriture du code.</br>
+                Vous pouvez ainsi ne pas renseigner le fichier <code>webpack.config.js</code> de l'application <i>hôte
+                    (shell)</i>, et directement utiliser dans le fichier de <i>routing angular</i>
+                <code>trip-kaizen-sor/src/app/routes.ts</code>, la méthode <code>loadRemoteModule</code>.
+                </p>
+                <details>
+                    <summary>Solution</summary>
+                    <p>
+                    <pre><code class="language-typescript">
+<span class="hljs-keyword">export const</span> APP_ROUTES: Route[] = [
+    {
+        path: <span class="hljs-built_in">'home'</span>,
+        loadChildren: () => <span class="hljs-keyword">import</span>(<span class="hljs-built_in">'./home/home.module'</span>).then(m => m.HomeModule)
+    },
+    {
+        path: <span class="hljs-built_in">'restaurants'</span>,
+        loadChildren: () => <span class="hljs-keyword">import</span>(<span class="hljs-built_in">'./restaurant-reviewing/restaurant-reviewing.module'</span>).then(m => m.RestaurantReviewingModule)
+    },
+    {
+        path: <span class="hljs-built_in">'hotels'</span>,
+        loadChildren: () => <span class="hljs-keyword">loadRemoteModule</span>({
+            <span class="hljs-keyword">type</span>:<span class="hljs-built_in">'module'</span>,
+            <span class="hljs-keyword">remoteEntry</span>:<span class="hljs-built_in">'http://localhost:4200/remoteEntry.js'</span>,
+            <span class="hljs-keyword">exposedModule</span>:<span class="hljs-built_in">'./module'</span>
+        }).then(m => m.HotelBookingModule)
+    },
+    {
+        path: <span class="hljs-built_in">''</span>,
+        redirectTo: <span class="hljs-built_in">'home'</span>,
+        pathMatch: <span class="hljs-built_in">'full'</span>
+    }
+];                                   
+                        </code></pre>
+                    </p>
+                </details>
+                <h3 id="use-nx-tools">Utiliser les méthodes fournie par la cli Nx</h3>
+            </article>
+        </section>
+    </main>
+</body>
+
+</html>

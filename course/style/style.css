@@ -1,0 +1,80 @@
+@font-face {
+    font-family: BebasNeue;
+    src: url("./fonts/bebas_neue/BebasNeue.otf") format("opentype");
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'BebasNeue';
+}
+
+a {
+    color: #7ad98c;
+}
+
+a:hover {
+    color: #52d4b3;
+}
+
+summary {
+    cursor: pointer;
+}
+
+.markdown-section code {
+    color: #FF8C00;
+}
+
+.markdown-section code.error {
+    color: rgb(220 38 38);
+}
+
+.markdown-section blockquote {
+    border-left: 4px solid #7ad98c;
+}
+
+.markdown-section pre>code {
+    padding: 1.5rem 1rem 0rem 1rem;
+}
+
+section.content.welcome {
+    background-image: url("../images/nastuh-abootalebi-yWwob8kwOCk-unsplash.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+section.content.welcome article.markdown-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+section.content.welcome h1 {
+    font-size: 6rem;
+    text-align: center;
+    color: #29ccd9
+}
+
+section.content.welcome a {
+    margin-top: 4rem;
+    font-size: 2rem;
+    text-decoration: none;
+    text-align: center;
+    background-color: #7ad98c;
+    color: #fff;
+    padding: 0.75rem 1.25rem 0.75rem 1.25rem;
+    border-radius: 99999px;
+}
+
+section.content.welcome a:hover {
+    background-color: #52d4b3;
+}
+
+section.content.welcome img {
+    width: 100%;
+    bottom: 2rem;
+    position: absolute;
+    opacity: 0.7;
+}
+
+
+
