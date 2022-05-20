@@ -27,13 +27,9 @@
                     <li><a href="00_getting_started.html">Pour commencer</a></li>
                     <li><a href="01_libs_and_monorepo.html">Libs et Monorepos</a></li>
                     <li><a href="02_module_federation.html">Microfrontends avec Module Federation</a></li>
-                    <li><a href="03_RxJs.html">Reactive Architectures with RxJS</a></li>
-                    <li><a href="04a_ngrx_store.html">NGRX Store</a></li>
-                    <li><a href="04b_selectors.html">NGRX Selectors</a></li>
-                    <li><a href="04c_ngrx_effects.html">NGRX Effects</a></li>
-                    <li><a href="04d_ngrx_entities.html">NGRX Entities</a></li>
-                    <li><a href="05_standalone_components.html">Composants Standalone</a></li>
-                    <li><a href="06_performance.html">Performances</a></li>
+                    <li><a href="03_ngrx.html">NGRX Store</a></li>
+                    <li><a class="disabled" disabled>Composants Standalone</a></li>
+                    <li><a class="disabled" disabled>Performances</a></li>
                 </ul>
             </div>
         </aside>
@@ -111,9 +107,9 @@
         <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> http: HttpClient</span>) { 
         }
     
-        find(): Observable&lt;<span class="hljs-built_in">Restaurant</span>[]&gt; {
-            <span class="hljs-keyword">const</span> url = <span class="hljs-string">&#x27;/restaurants?search=${search}&urgent=${urgent}&#x27;</span>;
-            <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.http.get&lt;<span class="hljs-built_in">string</span>[]&gt;(url);
+        find(search: string, urgent: boolean): Observable&lt;<span class="hljs-built_in">Restaurant</span>[]&gt; {
+            <span class="hljs-keyword">const</span> url = <span class="hljs-string">`/restaurants?search=${</span>search<span class="hljs-string">}&urgent=${</span>urgent<span class="hljs-string">}`</span>;
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.http.get&lt;<span class="hljs-built_in">Restaurant</span>[]&gt;(url);
         }
     }
     </code></pre>
@@ -211,27 +207,21 @@
                 <h2 id="adapt-your-library">Adapter la librairie</h2>
                 <p>
                     Nous allons maintenant adapter la <i>librairie</i> <code>restaurant-search-lib</code> pour qu'elle
-                    puisse
-                    également intégrer
-                    le <i>composant</i> <code>RestaurantSearchComponent</code>, le <i>composant</i>
-                    <code>RestaurantCardComponent</code>, ainsi que le <i>model</i> <code>Restaurant</code>, de façon à
-                    concevoir une <i>librarie</i> dédiée à la recherche de restaurants. <br>
+                    puisse également intégrer les <i>composants</i> d'<i>UI</i> graphique et les <i>classes</i> &
+                    <i>interfaces</i>
+                    qui sont en lien avec le <i>domaine</i> de la recherche de restaurant. Donc le <i>composant</i>
+                    <code>RestaurantCardComponent</code>, ainsi que le <i>model</i> <code>Restaurant</code>.
                 </p>
                 <ol>
                     <li>
-                        <p> Créez un <i>composant</i> <code>restaurant-search</code>avec la <i>cli nx</i>, via la
+                        <p> Créez un <i>composant</i> <code>restaurant-card</code>avec la <i>cli nx</i>, via la
                             commande
-                            <code>npx nx g component restaurant-search --project=restaurant-search-lib</code>. <br>
+                            <code>npx nx g component restaurant-card --project=restaurant-search-lib</code>. <br>
                             Coupez les sources du <i>composant</i>
-                            <code>trip-kaizen-sor/src/app/restaurant-reviewing/restaurant-search</code> dans ce
-                            <i>composant</i> le service <code>RestaurantSearchComponent</code>. <br>
+                            <code>trip-kaizen-sor/src/app/restaurant-reviewing/restaurant-card</code> dans ce
+                            nouveau <i>composant</i>. <br>
                             Une fois les sources déplacées, vous pouvez supprimer le <i>composant</i>
-                            <code>trip-kaizen-sor/src/app/restaurant-reviewing/restaurant-search</code>.
-                        </p>
-                    </li>
-                    <li>
-                        <p> Répétez l'opération avec le <i>composant</i>
-                            <code>trip-kaizen-sor/src/app/restaurant-reviewing/restaurant-card</code>
+                            <code>trip-kaizen-sor/src/app/restaurant-reviewing/restaurant-card</code>.
                         </p>
                     </li>
                     <li>
@@ -241,77 +231,6 @@
                             jouée est:
                             <code>npx nx g component restaurant-search --project=restaurant-search-lib</code>.
                         </p>
-                    </li>
-                    <li>
-                        <p> Notez que le <i>service</i> <code>RestaurantSearchService</code> ne fonctionne alors plus et
-                            affiche l'erreur:
-                            <code class="error">NullInjectorError: No provider for HttpClient!</code>.<br>
-                        </p>
-                        <p>Pour corriger cette erreur, il faut changer la valeur de l'<i>attribut</i>
-                            <code>provideIn</code> du
-                            <i>décorateur</i> <code>@Injector</code> du <code>RestaurantSearchService</code>.<br>
-                            Une solution peut être de supprimer totalement l'<i>attribut</i> <code>provideIn</code>, et
-                            d'ajouter le <code>RestaurantSearchService</code> à la liste des <code>providers</code> du
-                            <code>RestaurantSearchLibModule</code>.<br>
-                            Une autre, de mettre la valeur <code>any</code> qui permet de générer une instance du
-                            service par modules (<a
-                                href="https://angular.io/guide/providers#limiting-provider-scope-by-lazy-loading-modules">doc</a>).
-                        </p>
-                        <details>
-                            <summary>Solution 1</summary>
-                            <p>
-                            <pre><code class="language-typescript">
-<span class="hljs-string"># restaurant-search-lib/services/restaurant-search.service.ts</span>
-<span class="hljs-meta">@Injectable</span>()
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> RestaurantSearchService {
-
-    <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> http: HttpClient</span>) { 
-    }
-
-    find(): Observable&lt;<span class="hljs-built_in">Restaurant</span>[]&gt; {
-        <span class="hljs-keyword">const</span> url = <span class="hljs-string">&#x27;/restaurants?search=${search}&urgent=${urgent}&#x27;</span>;
-        <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.http.get&lt;<span class="hljs-built_in">string</span>[]&gt;(url);
-    }
-}
-
-<span class="hljs-string"># restaurant-search-lib/restaurant-search.module.ts</span>
-<span class="hljs-meta">@NgModule</span>({
-    <span class="hljs-keyword">providers</span>: [
-    RestaurantSearchService
-    ],
-    <span class="hljs-keyword">imports</span>: [
-      ...
-    ],
-    <span class="hljs-keyword">declarations</span>: [...],
-    <span class="hljs-keyword">exports</span>: [...],
-  })
-  <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> RestaurantSearchLibModule {
-      ...
-  }
-                                </code></pre>
-                            </p>
-                        </details>
-                        <details>
-                            <summary>Solution 2</summary>
-                            <p>
-                            <pre><code class="language-typescript">
-<span class="hljs-string"># restaurant-search-lib/services/restaurant-search.service.ts</span>
-<span class="hljs-meta">@Injectable</span>({
-    providedIn: <span class="hljs-string">&#x27;any&#x27;</span> 
-})
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> RestaurantSearchService {
-
-    <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> http: HttpClient</span>) { 
-    }
-
-    find(): Observable&lt;<span class="hljs-built_in">Restaurant</span>[]&gt; {
-        <span class="hljs-keyword">const</span> url = <span class="hljs-string">&#x27;/restaurants?search=${search}&urgent=${urgent}&#x27;</span>;
-        <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.http.get&lt;<span class="hljs-built_in">string</span>[]&gt;(url);
-    }
-}
-                                </code></pre>
-                            </p>
-                        </details>
                     </li>
                 </ol>
                 <h2 id="export-library">Exporter sa librairie sur un repos local npm</h2>
@@ -336,16 +255,19 @@
                     </li>
                     <li>
                         <p>A la racine du monorepo, buildez la <i>librairie</i>
-                            <code>ng build restaurant-search-lib</code></p>
+                            <code>ng build restaurant-search-lib</code>
+                        </p>
                     </li>
                     <li>
-                        <p>Dans le dossier <code>dist/restaurant-search-lib</code>, déployez le <i>build</i> sur le repository
+                        <p>Dans le dossier <code>dist/restaurant-search-lib</code>, déployez le <i>build</i> sur le
+                            repository
                             verdaccio:</p>
                         <pre><code>npm publish --registry http://localhost:4873/
         </code></pre>
                     </li>
                     <li>
-                        <p>Sur votre navigateur, ouvrez verdaccio (<a href="http://localhost:4873/">http://localhost:4873/</a>). Et trouvez
+                        <p>Sur votre navigateur, ouvrez verdaccio (<a
+                                href="http://localhost:4873/">http://localhost:4873/</a>). Et trouvez
                             votre <i>librairie</i> uploadée.</p>
                     </li>
                 </ol>

@@ -11,6 +11,10 @@ a {
     color: #7ad98c;
 }
 
+a.disabled {
+    text-decoration: line-through !important;
+}
+
 a:hover {
     color: #52d4b3;
 }
@@ -32,7 +36,7 @@ summary {
 }
 
 .markdown-section pre>code {
-    padding: 1.5rem 1rem 0rem 1rem;
+    padding: 1rem 1rem 0rem 1rem;
 }
 
 section.content.welcome {
@@ -67,6 +71,10 @@ section.content.welcome a {
 
 section.content.welcome a:hover {
     background-color: #52d4b3;
+}
+
+section.content.welcome a + a {
+    background-color: #a3de66;
 }
 
 section.content.welcome img {

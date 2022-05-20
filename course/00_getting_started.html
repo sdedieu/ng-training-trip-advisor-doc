@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="./style/style.css">
 
 </head>
+
 <body class="ready">
 
     <main>
@@ -26,13 +27,9 @@
                     <li><a href="00_getting_started.html">Pour commencer</a></li>
                     <li><a href="01_libs_and_monorepo.html">Libs et Monorepos</a></li>
                     <li><a href="02_module_federation.html">Microfrontends avec Module Federation</a></li>
-                    <li><a href="03_RxJs.html">Reactive Architectures with RxJS</a></li>
-                    <li><a href="04a_ngrx_store.html">NGRX Store</a></li>
-                    <li><a href="04b_selectors.html">NGRX Selectors</a></li>
-                    <li><a href="04c_ngrx_effects.html">NGRX Effects</a></li>
-                    <li><a href="04d_ngrx_entities.html">NGRX Entities</a></li>
-                    <li><a href="05_standalone_components.html">Composants Standalone</a></li>
-                    <li><a href="06_performance.html">Performances</a></li>
+                    <li><a href="03_ngrx.html">NGRX Store</a></li>
+                    <li><a class="disabled" disabled>Composants Standalone</a></li>
+                    <li><a class="disabled" disabled>Performances</a></li>
                 </ul>
             </div>
         </aside>
@@ -47,13 +44,15 @@
                             <li><a href="#before-you-start">Avant de commencer</a>
                         </ul>
                     </li>
-                    <li><a href="#take-a-closer-look-at-the-starter-kit">Regarder la structure et le contenu du starter-kit</a>
+                    <li><a href="#take-a-closer-look-at-the-starter-kit">Regarder la structure et le contenu du
+                            starter-kit</a>
                     </li>
                 </ul>
                 <h2 id="before-you-start">Avant de commencer</h2>
                 <h3 id="required-software">Outils nécessaires</h3>
                 <ul>
-                    <li><a href="https://nodejs.org/en/">NodeJS</a> dans sa version courante (le TP est réalisé à partir de la LTS v16.15.0)</li>
+                    <li><a href="https://nodejs.org/en/">NodeJS</a> dans sa version courante (le TP est réalisé à partir
+                        de la LTS v16.15.0)</li>
                     <li>IDE / Editor
                         - <a href="https://code.visualstudio.com/">Visual Studio Code</a> (gratuit) <em>ou</em>
                         - IntelliJ / WebStorm (payant)</li>
@@ -61,22 +60,28 @@
                     </li>
                 </ul>
                 <h2 id="take-a-closer-look-at-the-starter-kit">Regarder la structure et le contenu du starter-kit</h2>
-                <p>Dans cette partie, nous allons vous accompagner pour découvrir ensemble les points importants du kit de départ.</p>
+                <p>Dans cette partie, nous allons vous accompagner pour découvrir ensemble les points importants du kit
+                    de départ.</p>
                 <blockquote>
-                    <p><strong>Astuce importante:</strong> Pendant <strong>toute</strong> la durée de la formation, utilisez
-                        <code>CTRL</code>+<code>p</code> dans Visual Studio Code pour rapidement passer d'un fichier à un autre. 
-                        Equivalence: double <code>SHIFT</code> sur WebStorm/IntelliJ.</p>
+                    <p><strong>Astuce importante:</strong> Pendant <strong>toute</strong> la durée de la formation,
+                        utilisez
+                        <code>CTRL</code>+<code>p</code> dans Visual Studio Code pour rapidement passer d'un fichier à
+                        un autre.
+                        Equivalence: double <code>SHIFT</code> sur WebStorm/IntelliJ.
+                    </p>
                 </blockquote>
                 <ol>
                     <li>
                         <p>Look at the component in the <code>app.component.ts</code> and
                             <code>app.component.html</code> in the <code>flight-app</code> folder and find out what they
-                            do.</p>
+                            do.
+                        </p>
                     </li>
                     <li>
                         <p>Note that the <code>app.component.html</code> has an element
                             <code>&lt;router-outlet&gt;&lt;/router-outlet&gt;</code>. This is the placeholder for the
-                            router.</p>
+                            router.
+                        </p>
                     </li>
                     <li>
                         <p>Have a look at the routing configuration in <code>app.routes.ts</code>.</p>
@@ -87,15 +92,18 @@
                     <li>
                         <p>In the <code>flight-booking</code> folder, look at the module in the file
                             <code>flight-booking.module.ts</code> and the corresponding route configuration in the file
-                            <code>flight-booking.routes.ts</code>.</p>
+                            <code>flight-booking.routes.ts</code>.
+                        </p>
                     </li>
                     <li>
                         <p>Look at the component in the files <code>flight-search.component.ts</code> and
-                            <code>flight-search.component.html</code> and find out what they do.</p>
+                            <code>flight-search.component.html</code> and find out what they do.
+                        </p>
                     </li>
                     <li>
                         <p>Notice how the <code>flight-search.component.ts</code> imports the
-                            <code>FlightService</code>. Notice that it comes from a library of the Monorepo project.</p>
+                            <code>FlightService</code>. Notice that it comes from a library of the Monorepo project.
+                        </p>
                     </li>
                     <li>
                         <p>Go to the library <code>flight-lib</code> and look at the file <code>flight.service.ts</code>

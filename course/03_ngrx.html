@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Formation Angular expert by Kaizen - Sylvain DEDIEU</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="Description">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs/styles/atom-one-light.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="./style/style.css">
+
+</head>
+
+<body class="ready">
+
+    <main>
+        <aside class="sidebar">
+            <div class="sidebar-nav">
+                <p>&nbsp;</p>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="00_getting_started.html">Pour commencer</a></li>
+                    <li><a href="01_libs_and_monorepo.html">Libs et Monorepos</a></li>
+                    <li><a href="02_module_federation.html">Microfrontends avec Module Federation</a></li>
+                    <li><a href="03_ngrx.html">NGRX Store</a></li>
+                    <li><a class="disabled" disabled>Composants Standalone</a></li>
+                    <li><a class="disabled" disabled>Performances</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <section class="content">
+            <article class="markdown-section" id="main">
+
+                <h1 id="ngrx">NGRX</h1>
+                <p>
+                    Le grand défit du frontend est toujours la gestion du l'état (<i>du state</i>), de l'application,
+                    c'est à dire la représentation de l'ensemble des informations qui caractérisent ce que l'application
+                    affiche à un moment donné. <br>
+                    On ajoutera en plus de l'affichage des données pouvants être stockée dans la session du
+                    <i>navigateur web</i>.
+                </p>
+                <p>
+                    Plusieurs <i>pattern</i> architecturaux de <i>state management</i> existent, mais depuis quelques
+                    années, la majorité des développeurs utilisent <a
+                        href="https://redux.js.org/tutorials/fundamentals/part-7-standard-patterns">redux</a> comme
+                    <i>state management</i> par défaut.<br>
+                    <code>Redux</code> est à la fois un <i>pattern</i>, mais aussi une librairie <i>React</i>, car c'est
+                    au sein de ce <i>framework</i> qu'il a vu le jour.<br>
+                    <i>Angular</i> possède aussi son implémentation du <i>pattern</i> <code>Redux</code> à travers
+                    plusieurs <i>librairies</i> et nous allons plonger dans la plus utilisée d'entre elles: <a
+                        href="https://ngrx.io/">NGRX</a>.
+                </p>
+
+                <ul>
+                    <li><a href="#ngrx">NGRX</a>
+                        <ul>
+                            <li><a href="#ngrx-store">NGRX Store</a>
+                                <ul>
+                                    <li><a href="#ngrx-store-setup">Mise en place du Store</a>
+                                    <li><a href="#ngrx-feature-store-setup">Mise en place d'un Feature Store</a>
+                                    <li><a href="#ngrx-feature-store-implem">implémentation du Feature Store</a>
+                                </ul>
+                            <li><a href="#ngrx-effects">NGRX Effects</a>
+                            <li><a href="#ngrx-entities">NGRX Entities</a>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h2 id="ngrx-store">NGRX Store</h2>
+                <p>
+                    Le <code>Store</code> est une gestion d'état globale alimentée par <i>RxJS</i> pour les applications
+                    <i>Angular</i>, inspirée de <code>Redux</code>. Le <code>Store</code> est un conteneur d'état
+                    contrôlé conçu pour aider à écrire des applications performantes et cohérentes au-dessus d'Angular.
+                </p>
+                <p>
+                    <strong>Concepts clés:</strong>
+                <ul>
+                    <li>
+                        Les <i>actions</i> décrivent des événements uniques qui sont envoyés à partir de
+                        <i>composants</i>
+                        et de <i>services</i>.
+                    </li>
+                    <li>
+                        Les changements d'état sont gérés par des fonctions pures appelées <i>réducteurs</i> qui
+                        prennent
+                        l'état actuel et la dernière action pour calculer un nouvel <i>état</i>.
+                    </li>
+                    <li>
+                        Les <i>sélecteurs</i> sont des fonctions pures utilisées pour sélectionner, dériver et composer
+                        des
+                        éléments d'état.
+                    </li>
+                    <li>
+                        L'état est accessible avec le <code>Store</code>, un observable d'état et un observateur
+                        d'actions.
+                    </li>
+                </ul>
+                </p>
+                <h3 id="ngrx-store-setup">Mise en place du Store</h3>
+                <p>
+                    Vous pouvez suivre ces étapes :
+                </p>
+                <ol>
+                    <li>
+                        <p>
+                            Installer la librairie
+                        </p>
+                        <p>
+                            A la racine du monorepo, lancez les commandes suivantes:<br>
+                            <code>npm install --save @ngrx/store @ngrx/effects</code><br>
+                            <code>npm install @ngrx/schematics @ngrx/store-devtools --save-dev</code>
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Pour configurer le <code>Root Store</code> dans votre <i>application</i>
+                            <code>trip-kaizen-sor</code>,
+                            placez vous dans le repertoire <code>apps/trip-kaizen-sor/src/app</code> et lancez la
+                            commande
+                            <code>ng generate @ngrx/schematics:store AppState --root --statePath=+state --module=app.module.ts --project=trip-kaizen-sor</code>
+                        </p>
+                    </li>
+                    <li>
+                        <p>Ouvrez le fichier <code>app.module.ts</code> et regardez les changements apportés.</p>
+                    </li>
+                    <li>
+                        <p>Importez également le <code>EffectsModule</code> dans la liste des <code>imports</code> du
+                            <code>AppModule</code>.
+                        </p>
+                        <pre><code class="language-typescript"><span class="hljs-keyword">import</span> { EffectsModule } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ngrx/effects&#x27;</span>;
+
+[...]
+
+imports: [
+    [...],
+    EffectsModule.forRoot([])
+];
+</code></pre>
+                    </li>
+                </ol>
+                <h3 id="ngrx-feature-store-setup">Mise en place d'un Feature Store</h3>
+                <p>
+                    Vous pouvez suivre ces étapes :
+                </p>
+                <ol>
+                    <li>
+                        <p>Pour mettre en place le <code>StoreModule</code> pour un <i>feature module</i>, placez vous
+                            dans le repertoire
+                            <code>apps/trip-kaizen-sor/src/app/</code> and use the following command:
+                        </p>
+                        <p><code>ng generate @ngrx/schematics:feature restaurant-reviewing/+state/restaurant-reviewing --module=restaurant-reviewing/restaurant-reviewing.module.ts --creators</code>
+                        </p>
+                        <p>Si la commande vous demande, <i>Should we generate and wire success and failure actions?</i>,
+                            répondez
+                            &quot;no&quot;. Nous allons nous en occuper à la main dans ce TP.</p>
+                        <p>Ouvrez le nouveau dossier <code>+state</code> et parcourez les différents fichiers générés.
+                        </p>
+                        <p>Inspectez également les changements apportés au <code>restaurant-reviewing.module.ts</code>.
+                            Vous devez constater que la méthode <code>.forFeature</code> y est présente.</p>
+                    </li>
+                    <li>
+                        <p>
+                            Créez un fichier <code>restaurant-reviewing/+state/index.ts</code> qui exporte l'ensemble
+                            des fichiers (sauf les <code>.spec</code>) du dossier. <br>
+                            On appel cela <i>faire un barrel</i>.
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-string"># +state/index.ts</span>
+
+<span class="hljs-keyword">export * from</span> <span class="hljs-built_in">'./restaurant-reviewing.actions'</span>;
+<span class="hljs-keyword">export * from</span> <span class="hljs-built_in">'./restaurant-reviewing.reducer'</span>;
+<span class="hljs-keyword">export * from</span> <span class="hljs-built_in">'./restaurant-reviewing.selectors'</span>;
+<span class="hljs-keyword">export * from</span> <span class="hljs-built_in">'./restaurant-reviewing.effects'</span>;
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>Ouvrez le fichier <code>+state/restaurant-reviewing.effects.ts</code> et retirez le contenu
+                            de la classe.
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { Injectable } <span class="hljs-keyword">from</span> <span class="hljs-built_in">"@angular/core"</span>;
+
+@Injectable()
+<span class="hljs-keyword">export class</span> RestaurantReviewingEffects {
+}
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>La prochaine étape consiste à effectuer le chargement des <i>restaurants</i> via le
+                            <code>Store</code> <i>NGRX</i>.
+                        </p>
+                        <p><strong>Si vous avez suivi le TP <a href="01_libs_and_monorepo.html"></a>Libs et Monorepos,
+                                passez directement à la
+                                <a href="#ngrx-feature-store-implem">suite</a></strong>.
+                        </p>
+                    </li>
+                    <li>
+                        <p><strong>Sinon:</strong> Créer un nouveau <i>service</i> <code>RestaurantSearchService</code>
+                            dans le dossier du
+                            *module* <code>RestaurantReviewingModule</code>. <br>
+                            Pour cela, vous ppouvez utiliser la commande
+                            <code>npx nx g service restaurant-reviewing/services/restaurant-search --project=trip-kaizen-sor</code>
+                        </p>
+                    </li>
+                    <li>
+                        <p>Renseignez le contenu du <i>service</i> <code>RestaurantSearchService</code> dans le dossier
+                            du <i>module</i> <code>RestaurantReviewingModule</code> de façon à ce qu'il ait une
+                            méthode <code>find(search: string, urgent: boolean): Observable&lt;Restaurant[]&gt;</code>.
+                            <br>
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+    <span class="hljs-keyword">import</span> { Injectable } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@angular/core&#x27;</span>;
+    <span class="hljs-keyword">import</span> { HttpClient } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@angular/common/http&#x27;</span>;
+    <span class="hljs-keyword">import</span> { Observable } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;rxjs&#x27;</span>;
+    <span class="hljs-keyword">import</span> { Restaurant } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../models/restaurant&#x27;</span>;
+    
+    <span class="hljs-meta">@Injectable</span>({ 
+        providedIn: <span class="hljs-string">&#x27;root&#x27;</span> 
+    })
+    <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> RestaurantSearchService {
+    
+        <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> http: HttpClient</span>) { 
+        }
+    
+        find(search: string, urgent: boolean): Observable&lt;<span class="hljs-built_in">Restaurant</span>[]&gt; {
+            <span class="hljs-keyword">const</span> url = <span class="hljs-string">`/restaurants?search=${</span>search<span class="hljs-string">}&urgent=${</span>urgent<span class="hljs-string">}`</span>;
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.http.get&lt;<span class="hljs-built_in">Restaurant</span>[]&gt;(url);
+        }
+    }
+    </code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>Applez la méthode <code>find</code> du <i>service</i> <code>RestaurantSearchService</code>
+                            dans la chaine d'observable de la méthode <code>ngOnInit</code> du <i>composant</i>
+                            <code>RestaurantSearchComponent</code>. <br>
+                            Remplacez le contenu de <i>l'opérateur rxjs</i> <code>switchMap</code> par la méthode
+                            <code>this.restaurantSearchService.find(...)</code> à la place de <code>of([])</code>.
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> restaurantSearchService: RestaurantSearchService</span>) { 
+}
+
+<span class="hljs-keyword">ngOnInit</span>(): <span class="hljs-built_in">void</span> {
+    <span class="hljs-built_in">this</span>.restaurants$ = <span class="hljs-built_in">this</span>.search$.pipe(
+        tap(() <span class="hljs-function">=&gt;</span> <span class="hljs-built_in">this</span>.isLoading$.next(<span class="hljs-keyword">true</span>)),
+        debounceTime(500),
+        switchMap(search <span class="hljs-function">=&gt;</span> <span class="hljs-built_in">this</span>.restaurantSearchService.find(search, <span class="hljs-built_in">this</span>.urgent)),
+        tap(() <span class="hljs-function">=&gt;</span> <span class="hljs-built_in">this</span>.isLoading$.next(<span class="hljs-keyword">false</span>))
+    );
+}
+    </code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>Rajoutez un <i>handler</i> d'erreur dans la chaine d'observables avec <i>l'opérateur rxjs</i>
+                            <code>catchError</code>. <br>
+                            <strong>Attention:</strong> L'opérateur doit être positionné au bon endroit dans la chaine
+                            pour éviter une interruption de la chaine d'observables lors d'une erreur.
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> restaurantSearchService: RestaurantSearchService</span>) { 
+}
+
+<span class="hljs-keyword">ngOnInit</span>(): <span class="hljs-built_in">void</span> {
+    <span class="hljs-built_in">this</span>.restaurants$ = <span class="hljs-built_in">this</span>.search$.pipe(
+        tap(() <span class="hljs-function">=&gt;</span> <span class="hljs-built_in">this</span>.isLoading$.next(<span class="hljs-keyword">true</span>)),
+        debounceTime(500),
+        switchMap(search <span class="hljs-function">=&gt;</span> <span class="hljs-built_in">this</span>.restaurantSearchService.find(search, <span class="hljs-built_in">this</span>.urgent).pipe(
+            catchError(() <span class="hljs-function">=&gt;</span> of([]))
+        )),
+        tap(() <span class="hljs-function">=&gt;</span> <span class="hljs-built_in">this</span>.isLoading$.next(<span class="hljs-keyword">false</span>))
+    );
+}
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                </ol>
+
+                <h3 id="ngrx-feature-store-implem">Implementation du Feature Store</h3>
+                <p>
+                    Vous pouvez suivre ces étapes :
+                </p>
+                <ol>
+                    <li>
+                        <p>
+                            Ouvrez le fichier <code>restaurant-reviewing/+state/restaurant-reviewing.actions.ts</code>,
+                            il contient les <code>actions</code> du <code>Store</code>.<br>
+                            Renommez l'action <code>loadRestaurantReviewings</code> en <code>restaurantsLoaded</code>
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { createAction, props } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+
+<span class="hljs-keyword">export const</span> restaurantsLoaded = createAction(
+    <span class="hljs-built_in">'[RestaurantReviewing] Restaurants Loaded'</span>
+);
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            La méthode <code>createAction</code> qui permet, comme son nom l'indique, de créer une
+                            action, prend en arguments:<br>
+                        <ul>
+                            <li>Une <code>string</code> d'identifiant unique</li>
+                            <li>Un <code>ActionCreatorProps</code> <i>(optionnel)</i>, objet qui contient les paramètres
+                                à faire passer à l'action</li>
+                        </ul>
+                        <a href="https://ngrx.io/api/store/createAction" target="_blank">Documentation</a>
+                        </p>
+                        <p>
+                            Ajouter à l'action <code>restaurantsLoaded</code>, le paramètre <code>restaurants</code>,
+                            liste des <i>restaurants</i> à enregistrer dans le <code>Store</code>.
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { createAction, props } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+<span class="hljs-keyword">import</span> { Restaurant } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'../models/restaurant'</span>;
+
+<span class="hljs-keyword">export const</span> restaurantsLoaded = createAction(
+    <span class="hljs-built_in">'[RestaurantReviewing] Restaurants Loaded'</span>,
+    props<{ restaurants: Restaurant[] }>()
+);
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            Ouvrez maintenant le fichier
+                            <code>restaurant-reviewing/+state/restaurant-reviewing.reducer.ts</code>, il contient le
+                            <code>reducer</code> du <code>Store</code>.<br>
+                            Renommez la méthode <code>loadRestaurantReviewings</code> actuellement en erreur en
+                            <code>restaurantsLoaded</code>
+                        </p>
+                        <p>
+                            La méthode <code>on</code> permet de définir un <i>handler</i> d'une action.<br>
+                            Elle prend en arguments:<br>
+                        <ul>
+                            <li>Une <code>action</code>, l'action à traiter</li>
+                            <li>Un <code>reducer</code>, la méthode qui va traiter l'action</li>
+                        </ul>
+                        <a href="https://ngrx.io/guide/store/reducers#on" target="_blank">Documentation</a>
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Avant d'écrire notre méthode de <code>reducer</code>, nous devons définir les types du
+                            <code>State</code>.
+                            C'est à dire l'<i>interface</i> ainsi que le <code>initialState</code>, la valeur par défaut
+                            du <code>State</code>.
+                        </p>
+                        <p>
+                            Nous allons commencer par définir qu'un <code>State</code> possède:<br>
+                        <ul>
+                            <li>Un <code>restaurants</code> qui est un <code>array</code> de <code>Restaurant</code>,
+                                par défaut <code>[]</code>.</li>
+                        </ul>
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { Action, createReducer, on } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+<span class="hljs-keyword">import</span> * as RestaurantReviewingActions <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./restaurant-reviewing.actions'</span>;
+
+<span class="hljs-keyword">import const</span> restaurantReviewingFeatureKey = <span class="hljs-built_in">'restaurantReviewing'</span>;
+
+<span class="hljs-keyword">export interface</span> State {
+    restaurants: Restaurant[];
+}
+
+<span class="hljs-keyword">export const</span> initialState: State = {
+    restaurants: []
+};
+
+<span class="hljs-keyword">export const</span> reducer = createReducer(
+  initialState,
+
+  <span class="hljs-meta">on</span>(RestaurantReviewingActions.restaurantsLoaded, state <span class="hljs-function">=&gt;</span> state),
+
+);
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            Ensuite nous allons implémenter notre méthode de <code>reducer</code>, de façon à ce qu'elle
+                            ajoute au <code>state</code>, la nouvelle valeur de <code>restaurants</code>.<br>
+                            Le state est <i>immuable</i>, c'est à dire qu'il ne peut pas être modifié. Il faut donc ici
+                            que la méthode <code>reducer</code> retourne un nouveau <code>state</code>.
+                        </p>
+                        <p>
+                            Modifiez le paramètre <code>state</code> de la fonction de <code>reducer</code> de la
+                            méthode <code>on</code> en
+                            <code>(state, action) <span class="hljs-function">=&gt;</span> {...}</code>. <br>
+                            Implémentez maintenant la méthode. Vous trouverez la liste des <code>restaurants</code>,
+                            dans le paramètre <code>action.restaurants</code>.
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">export const</span> reducer = createReducer(
+  initialState,
+
+  <span class="hljs-meta">on</span>(RestaurantReviewingActions.restaurantsLoaded, (state, action) <span class="hljs-function">=&gt;</span> ({...state, restaurants: action.restaurants})),
+
+);
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            Nous allons maintenant créer notre <code>selector</code> qui va récupérer la liste des
+                            <i>restaurants</i> depuis le store pour les mettre en accessibilité aux <i>composants</i>.
+                        </p>
+                        <p>
+                            Dans le fichier <code>restaurant-reviewing/+state/restaurant-reviewing.selectors.ts</code>,
+                            créez et exportez un <i>selector</i> <code>selectRestaurants</code> qui retourne la liste
+                            des <i>restaurants</i> contenus dans le <code>State</code>.<br>
+                            <a href="https://ngrx.io/guide/store/selectors#using-a-selector-for-one-piece-of-state"
+                                target="_blank">Documentation</a>
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { createFeatureSelector, createSelector } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+<span class="hljs-keyword">import * as</span> fromRestaurantReviewing <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./restaurant-reviewing.reducer'</span>;
+
+<span class="hljs-keyword">export const</span> selectRestaurantReviewingState = createFeatureSelector<fromRestaurantReviewing.State>(
+  fromRestaurantReviewing.restaurantReviewingFeatureKey
+);
+
+<span class="hljs-keyword">export const</span> selectRestaurants = createSelector(
+  selectRestaurantReviewingState,
+  state <span class="hljs-function">=&gt;</span> state.restaurants
+);
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            A présent, dans le fichier <code>restaurant-search.component.ts</code>, nous allons modifier
+                            le contenu de méthode <code>ngOnInit</code>;<br> de façon à appeler l'<i>action</i>
+                            <code>restaurantsLoaded</code> du <code>Store</code> à chaque récupération de restaurants,
+                            ainsi qu'affecter à la variable <code>this.restaurants</code> le <code>selector</code> créé
+                            précedemment.
+                        </p>
+                        <p>
+                            Importez et injectez le barrel <code>+state/index.ts</code> dans le constructeur du
+                            <code>RestaurantSearchComponent</code>.
+                        <pre><span class="language-typescript">
+<span class="hljs-keyword">import</span> { restaurantsLoaded, selectRestaurants } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'../+state'</span>;
+
+[...]
+
+<span class="hljs-keyword">constructor</span>(<span class="hljs-keyword">private</span> restaurantSearchService: RestaurantSearchService,
+    <span class="hljs-keyword">private</span> store: Store&lt;fromRestaurantReviewing.State&gt;) { }
+                            </code></pre>
+                        </p>
+                        <p>
+                            Modifiez la chaîne <i>observable</i> contenu dans la méthode <code>ngOnInit</code> pour
+                            qu'elle ait une méthode <code>subscribe</code> qui
+                            dispatch dans sa partie <code>next:</code> l'<i>action</i> <code>restaurantsLoaded</code> du
+                            <code>Store</code> avec les <i>restaurants</i> en argument.
+                            <br>
+                            <a href="https://ngrx.io/guide/store/actions#writing-actions"
+                                target="_blank">Documentation</a><br>
+                        </p>
+                        <p>
+                            La chaîne renvoyant à présent une <code>Subscription</code>, supprimez également l'affection
+                            à la variable
+                            <code>this.restaurants$ = ...</code>.<br>
+                            A la place, affectez le <code>selector</code> <code>selectRestaurants</code> à la variable
+                            <code>this.restaurants$</code>.<br>
+                            <a href="https://ngrx.io/guide/store/selectors#using-store-without-type-generic"
+                                target="_blank">Documentation</a>
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">export class</span> RestaurantSearchComponent <span class="hljs-keyword">implements</span> OnInit {
+    restaurants$: Observable&lt;Restaurant[]&gt; = of([]);
+    search = <span class="hljs-built_in">''</span>;
+    urgent = <span class="hljs-keyword">false</span>;
+    isLoading$ = <span class="hljs-keyword">new</span> BehaviorSubject&lt;boolean&gt;(<span class="hljs-keyword">false</span>);
+    search$ = <span class="hljs-keyword">new</span> BehaviorSubject&lt;string&gt;(<span class="hljs-built_in">''</span>);
+    
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-keyword">private</span> restaurantSearchService: RestaurantSearchService,
+    <span class="hljs-keyword">private</span> store: Store&lt;fromRestaurantReviewing.State&gt;) { }
+    
+    ngOnInit(): void {
+        <span class="hljs-built_in">this</span>.restaurants$ = <span class="hljs-built_in">this</span>.store.select(selectRestaurants);
+    
+        <span class="hljs-built_in">this</span>.search$.pipe(
+            tap(() <span class="hljs-function">=&gt;</span> <span class="hljs-built_in">this</span>.isLoading$.next(<span class="hljs-keyword">true</span>)),
+            debounceTime(500),
+            switchMap(search <span class="hljs-function">=&gt;</span> <span class="hljs-built_in">this</span>.restaurantSearchService.find(search, <span class="hljs-built_in">this</span>.urgent).pipe(
+                catchError(() <span class="hljs-function">=&gt;</span> of([]))
+            )),
+            tap(() <span class="hljs-function">=&gt;</span> <span class="hljs-built_in">this</span>.isLoading$.next(<span class="hljs-keyword">false</span>))
+        ).subscribe({
+            next: restaurants <span class="hljs-function">=&gt;</span> <span class="hljs-built_in">this</span>.store.dispatch(restaurantsLoaded({ restaurants })),
+        })
+    }
+    
+    dispatchSearch() {
+        <span class="hljs-built_in">this</span>.search$.next(<span class="hljs-built_in">this</span>.search);
+    }
+}                                  
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                </ol>
+                <h2 id="ngrx-effects">NGRX Effects</h2>
+                <p>
+                    Nous allons maintenant changer notre implémentation pour utiliser les <code>effects</code> de
+                    <code>NGRX</code>.
+                </p>
+                <p>
+                    Les <code>effects</code> permettent de déclencher des actions tierces dans le <code>Store</code>
+                    pouvants être <i>asynchrones</i>.<br>
+                    L'idée est alors de <i>dispatcher</i> des <code>actions</code> qui vont entrainer le déclenchement
+                    d'<code>effects</code> qui vont appeler les <i>services</i> pour récupérer les données afin des les
+                    transmettre à d'autres <code>actions</code> qui vont mettre à jour le <code>Store</code>.
+                </p>
+                <p>
+                    Cette méthodologie un peu verbeuse a pour énorme avantage de centraliser la logique du code dans les
+                    <code>effects</code>.
+                </p>
+                <ol>
+                    <li>
+                        <p>
+                            Ouvrez le fichier <code>restaurant-reviewing.actions.ts</code> et créez deux nouvelles
+                            <code>actions</code>:<br>
+                        <ul>
+                            <li>
+                                <code>loadRestaurants</code>, qui prend en argument un <i>attribut</i>
+                                <code>search: string</code> et un <i>attribut</i> <code>urgent: boolean</code>.
+                            </li>
+                            <li>
+                                <code>loadRestaurantsFailure</code>, qui ne prend pas d'arguments.
+                            </li>
+                        </ul>
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { createAction, props } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+<span class="hljs-keyword">import</span> { Restaurant } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'../models/restaurant'</span>;
+
+<span class="hljs-keyword">export const</span> loadRestaurants = createAction(
+    <span class="hljs-built_in">'[RestaurantReviewing] Load Restaurants'</span>,
+    props<{ search: string, urgent: boolean }>()
+);
+
+<span class="hljs-keyword">export const</span> restaurantsLoaded = createAction(
+    <span class="hljs-built_in">'[RestaurantReviewing] Restaurants Loaded'</span>,
+    props<{ restaurants: Restaurant[] }>()
+);
+
+<span class="hljs-keyword">export const</span> loadRestaurantsFailure = createAction(
+    <span class="hljs-built_in">'[RestaurantReviewing] Load Restaurants Failure'</span>
+);               
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            Dans le fichier <code>restaurant-reviewing.effects.ts</code>, créez un nouvel
+                            <code>effect</code>.<br>
+                            <a href="https://ngrx.io/api/effects/createEffect#usage-notes" target="_blank">
+                                Documentation</a>
+                        </p>
+                        <p>
+                            Implémentez cet <code>effect</code> de manière à ce qu'il soit appelé lorsque
+                            l'<code>action</code>
+                            <code>loadRestaurants</code> est déclenchée.<br>
+                            Il doit ensuite, après un <code>debounceTime(500)</code>, appeler la méthode
+                            <code>find</code> du <code>RestaurantSearchService</code>
+                            avec les arguments <code>search</code> et <code>urgent</code>. <br>
+                        <ul>
+                            <li>En cas de succès, l'<code>action</code> <code>restaurantsLoaded</code> doit être
+                                déclenchée avec les données passées dans l'<i>argument</i> <code>restaurants</code>.<br>
+                            </li>
+                            <li>En cas d'erreur, l'<code>action</code> <code>loadRestaurantsFailure</code> doit être
+                                déclenchée.</li>
+                        </ul>
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { Injectable } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/core'</span>;
+<span class="hljs-keyword">import</span> { Actions, createEffect, ofType } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/effects'</span>;
+<span class="hljs-keyword">import</span> { catchError, switchMap, map } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'rxjs/operators'</span>;
+<span class="hljs-keyword">import</span> { of } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'rxjs'</span>;
+<span class="hljs-keyword">import</span> { RestaurantSearchService } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'../services/restaurant-search.service'</span>;
+<span class="hljs-keyword">import</span> * as RestaurantReviewingActions <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./restaurant-reviewing.actions'</span>;
+
+<span class="hljs-meta">@Injectable</span>()
+<span class="hljs-keyword">export class</span> RestaurantReviewingEffects {
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-keyword">private</span> actions$: Actions, <span class="hljs-keyword">private</span> restaurantSearchService: RestaurantSearchService) {}
+
+  loadRestaurants$ = createEffect(() <span class="hljs-function">=&gt;</span> <span class="hljs-built_in">this</span>.actions$.pipe(
+    ofType(RestaurantReviewingActions.loadRestaurants),
+    debounceTime(500),
+    switchMap(action <span class="hljs-function">=&gt;</span> <span class="hljs-built_in">this</span>.restaurantSearchService.find(action.search, action.urgent).pipe(
+      map(restaurants <span class="hljs-function">=&gt;</span> RestaurantReviewingActions.restaurantsLoaded({ restaurants })),
+      catchError(() <span class="hljs-function">=&gt;</span> of(RestaurantReviewingActions.loadRestaurantsFailure()))
+    ))
+  ));
+}
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            Il nous faut maintenant modifier une nouvelle fois le <i>component</i>
+                            <code>RestaurantSearchComponent</code>.
+                        </p>
+                        <p>
+                            Modifiez le contenu de la méthode <code>ngOnInit</code> pour qu'elle appelle la méthode
+                            <code>loadRestaurants</code> avec
+                            les arguments <code>search</code> et <code>urgent</code> à chaque fois que la méthode
+                            <code>dispatchSearch</code> est appelée.<br>
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">constructor</span>(<span class="hljs-keyword">private</span> store: Store&lt;fromRestaurantReviewing.State&gt;) { }
+
+ngOnInit(): void {
+    <span class="hljs-built_in">this</span>.restaurants$ = <span class="hljs-built_in">this</span>.store.select(selectRestaurants);
+
+    <span class="hljs-built_in">this</span>.dispatchSearch();
+}
+
+dispatchSearch() {
+    <span class="hljs-built_in">this</span>.store.dispatch(fromRestaurantReviewing.loadRestaurants({ search: <span class="hljs-built_in">this</span>.search, urgent: <span class="hljs-built_in">this</span>.urgent }));
+
+}
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            La page a cependant perdu son <i>spinner</i> qui améliorait l'<i>expérience utilisateur</i> lors de l'attente des données après une recherche. 
+                        </p>
+                        <p>
+                            L'idée ici est de le remettre en place en l'ajoutant au <code>Sate</code>, car après tout, sa présence ou non est une information du <i>state</i> (de l'état de l'application).
+                        </p>
+                        <p>
+                            Ajoutez dans le fichier <code>+state/restaurant-reviewing.reducer.ts</code> un <i>reducer</i> sur l'action <code>loadRestaurants</code> qui passe à <code>true</code> un nouvel <i>attribut</i> <code>isLoading</code> du <code>State</code>.<br>
+                            Ajoutez également dans le <i>reducer</i> de l'<i>action</i> <code>restaurantsLoaded</code>, le passage de <code>isLoading</code> à <code>false</code>.<br>
+                            Enfin, ajoutez un autre <i>reducer</i> sur l'action <code>loadRestaurantsFailure</code> qui passe l'<i>attribut</i> <code>isLoading</code> à <code>false</code>.
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-keyword">import</span> { Action, createReducer, on } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+<span class="hljs-keyword">import</span> * as RestaurantReviewingActions <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./restaurant-reviewing.actions'</span>;
+
+<span class="hljs-keyword">import const</span> restaurantReviewingFeatureKey = <span class="hljs-built_in">'restaurantReviewing'</span>;
+
+<span class="hljs-keyword">export interface</span> State {
+    restaurants: Restaurant[];
+    isLoading: boolean;
+}
+
+<span class="hljs-keyword">export const</span> initialState: State = {
+    restaurants: [],
+    isLoading: <span class="hljs-keyword">false</span>
+};
+
+<span class="hljs-keyword">export const</span> reducer = createReducer(
+  initialState,
+  
+  <span class="hljs-meta">on</span>(RestaurantReviewingActions.loadRestaurants, state => ({...state, isLoading: <span class="hljs-keyword">true</span>})),
+
+  <span class="hljs-meta">on</span>(RestaurantReviewingActions.restaurantsLoaded, (state, action) => ({...state, restaurants: action.restaurants, isLoading: <span class="hljs-keyword">false</span>})),
+  
+  <span class="hljs-meta">on</span>(RestaurantReviewingActions.loadRestaurantsFailure, state => ({...state, isLoading: <span class="hljs-keyword">false</span>})),
+);
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            Créez maintenant un <code>selector</code> qui permet d'avoir la valeur du <code>isLoading</code> du <code>State</code> et utilisez le dans le <i>component</i> <code>RestaurantSearchComponent</code>.
+                        </p>
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-string"># /+state/restaurant-reviewing.selectors.ts</span> 
+
+<span class="hljs-keyword">import</span> { createFeatureSelector, createSelector } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+<span class="hljs-keyword">import * as</span> fromRestaurantReviewing <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./restaurant-reviewing.reducer'</span>;
+
+<span class="hljs-keyword">export const</span> selectRestaurantReviewingState = createFeatureSelector<fromRestaurantReviewing.State>(
+  fromRestaurantReviewing.restaurantReviewingFeatureKey
+);
+
+<span class="hljs-keyword">export const</span> selectRestaurants = createSelector(
+  selectRestaurantReviewingState,
+  state <span class="hljs-function">=&gt;</span> state.restaurants
+);
+
+<span class="hljs-keyword">export const</span> selectIsLoading = createSelector(
+  selectRestaurantReviewingState,
+  state <span class="hljs-function">=&gt;</span> state.isLoading
+);
+
+<span class="hljs-string"># /restaurant-search/restaurant-search.component.ts</span> 
+
+<span class="hljs-keyword">import</span> { Component, OnInit } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/core'</span>;
+<span class="hljs-keyword">import</span> { BehaviorSubject, EMPTY, Observable, of } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'rxjs'</span>;
+<span class="hljs-keyword">import</span> { Restaurant } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'../models/restaurant'</span>;
+<span class="hljs-keyword">import * as</span> fromRestaurantReviewing <span class="hljs-keyword">from</span> <span class="hljs-built_in">'../+state'</span>;
+<span class="hljs-keyword">import</span> { Store } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+<span class="hljs-keyword">import</span> { selectIsLoading, selectRestaurants } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'../+state'</span>;
+
+<span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-built_in">'tks-restaurant-search'</span>,
+  templateUrl: <span class="hljs-built_in">'./restaurant-search.component.html'</span>,
+  styleUrls: [<span class="hljs-built_in">'./restaurant-search.component.css'</span>],
+})
+<span class="hljs-keyword">export class</span> RestaurantSearchComponent <span class="hljs-keyword">implements</span> OnInit {
+    restaurants$: Observable&lt;Restaurant[]&gt; = of([]);
+    search = <span class="hljs-built_in">''</span>;
+    urgent = <span class="hljs-keyword">false</span>;
+    isLoading$ = <span class="hljs-keyword">new</span> BehaviorSubject&lt;boolean&gt;(<span class="hljs-keyword">false</span>);
+    search$ = <span class="hljs-keyword">new</span> BehaviorSubject&lt;string&gt;(<span class="hljs-built_in">''</span>);
+    
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-keyword">private</span> restaurantSearchService: RestaurantSearchService,
+    <span class="hljs-keyword">private</span> store: Store&lt;fromRestaurantReviewing.State&gt;) { }
+    
+    ngOnInit(): void {
+        <span class="hljs-built_in">this</span>.isLoading$ = <span class="hljs-built_in">this</span>.store.select(selectIsLoading);
+        <span class="hljs-built_in">this</span>.restaurants$ = <span class="hljs-built_in">this</span>.store.select(selectRestaurants);
+
+        <span class="hljs-built_in">this</span>.dispatchSearch();
+    }
+    
+    dispatchSearch() {
+        <span class="hljs-built_in">this</span>.search$.next(<span class="hljs-built_in">this</span>.search);
+    }
+}                              
+</code></pre>
+                            </p>
+                        </details>
+                    </li>   
+                </ol>
+            </article>
+        </section>
+    </main>
+</body>
+
+</html>
