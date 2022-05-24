@@ -68,7 +68,7 @@
                                     <li><a href="#ngrx-feature-store-implem">implémentation du Feature Store</a>
                                 </ul>
                             <li><a href="#ngrx-effects">NGRX Effects</a>
-                            <li><a href="#ngrx-entities">NGRX Entities</a>
+                            <li><a href="#ngrx-selectors">NGRX Selectors composés</a>
                         </ul>
                     </li>
                 </ul>
@@ -703,15 +703,21 @@ dispatchSearch() {
                     </li>
                     <li>
                         <p>
-                            La page a cependant perdu son <i>spinner</i> qui améliorait l'<i>expérience utilisateur</i> lors de l'attente des données après une recherche. 
+                            La page a cependant perdu son <i>spinner</i> qui améliorait l'<i>expérience utilisateur</i>
+                            lors de l'attente des données après une recherche.
                         </p>
                         <p>
-                            L'idée ici est de le remettre en place en l'ajoutant au <code>Sate</code>, car après tout, sa présence ou non est une information du <i>state</i> (de l'état de l'application).
+                            L'idée ici est de le remettre en place en l'ajoutant au <code>Sate</code>, car après tout,
+                            sa présence ou non est une information du <i>state</i> (de l'état de l'application).
                         </p>
                         <p>
-                            Ajoutez dans le fichier <code>+state/restaurant-reviewing.reducer.ts</code> un <i>reducer</i> sur l'action <code>loadRestaurants</code> qui passe à <code>true</code> un nouvel <i>attribut</i> <code>isLoading</code> du <code>State</code>.<br>
-                            Ajoutez également dans le <i>reducer</i> de l'<i>action</i> <code>restaurantsLoaded</code>, le passage de <code>isLoading</code> à <code>false</code>.<br>
-                            Enfin, ajoutez un autre <i>reducer</i> sur l'action <code>loadRestaurantsFailure</code> qui passe l'<i>attribut</i> <code>isLoading</code> à <code>false</code>.
+                            Ajoutez dans le fichier <code>+state/restaurant-reviewing.reducer.ts</code> un
+                            <i>reducer</i> sur l'action <code>loadRestaurants</code> qui passe à <code>true</code> un
+                            nouvel <i>attribut</i> <code>isLoading</code> du <code>State</code>.<br>
+                            Ajoutez également dans le <i>reducer</i> de l'<i>action</i> <code>restaurantsLoaded</code>,
+                            le passage de <code>isLoading</code> à <code>false</code>.<br>
+                            Enfin, ajoutez un autre <i>reducer</i> sur l'action <code>loadRestaurantsFailure</code> qui
+                            passe l'<i>attribut</i> <code>isLoading</code> à <code>false</code>.
                         </p>
                         <details>
                             <summary>Solution</summary>
@@ -748,7 +754,9 @@ dispatchSearch() {
                     </li>
                     <li>
                         <p>
-                            Créez maintenant un <code>selector</code> qui permet d'avoir la valeur du <code>isLoading</code> du <code>State</code> et utilisez le dans le <i>component</i> <code>RestaurantSearchComponent</code>.
+                            Créez maintenant un <code>selector</code> qui permet d'avoir la valeur du
+                            <code>isLoading</code> du <code>State</code> et utilisez le dans le <i>component</i>
+                            <code>RestaurantSearchComponent</code>.
                         </p>
                         <details>
                             <summary>Solution</summary>
@@ -811,7 +819,239 @@ dispatchSearch() {
 </code></pre>
                             </p>
                         </details>
-                    </li>   
+                    </li>
+                </ol>
+
+                <h2 id="ngrx-selectors">NGRX Selectors composés</h2>
+                <p>
+                    Dans cette section, nous allons créer un <i>selector composé</i>.<br>
+                    C'est à dire, à un <i>selector</i> issu de plusieurs autres <i>selectors</i>.
+                </p>
+                <p>
+                    Pour donner un sens fonctionnel à notre <i>selector composé</i>, nous allons commencer par ajouter à
+                    notre recherche de <i>restaurants</i>,
+                    un filtre par <i>prix</i>.
+                </p>
+                <ol>
+                    <li>
+                        <p>
+                            Dans le fichier <code>restaurant-search/restaurant-search.component.html</code>, après la
+                            fermeture de la balise section
+                        <pre><code class="language-typescript">
+&lt;section class=<span class="hljs-built_in">"search-section"</span>&gt;
+    [...]
+&lt;/section&gt;
+
+</code></pre>
+                        ajoutez la ligne:<br>
+                        <pre><code class="language-typescript">
+&lt;section class=<span class="hljs-built_in">"search-section"</span>&gt;
+    [...]
+&lt;/section&gt;
+&lt;tks-price-chips-filter <span class="hljs-keyword">(selectionChange)</span>=<span class="hljs-built_in">"dispatchSelectedPrices($event)"</span>&gt;&lt;/tks-price-chips-filter&gt;
+                                
+</code></pre>
+                        </p>
+                        <p>
+                            Dans le fichier <code>restaurant-search/restaurant-search.component.ts</code>, ajoutez la
+                            méthode:<br>
+                        <pre><code class="language-typescript">
+dispatchSelectedPrices(prices: number[]) {
+    <span class="hljs-built_in">// TODO: Dispatch prices to the store here </span>
+}
+
+                                </code></pre>
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Ajoutez une <i>action</i>, un <i>reducer</i>, un <i>selector</i> afin de pouvoir enregistrer
+                            dans le <code>Store</code> cette liste de nombres (<code>number[]</code>).
+                        </p>
+
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-string"># +state/restaurant-reviewing.actions.ts</span> 
+
+<span class="hljs-keyword">import</span> { createAction, props } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+<span class="hljs-keyword">import</span> { Restaurant } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'../models/restaurant'</span>;
+
+<span class="hljs-keyword">export const</span> loadRestaurants = createAction(
+    <span class="hljs-built_in">'[RestaurantReviewing] Load Restaurants'</span>,
+    props<{ search: string, urgent: boolean }>()
+);
+
+<span class="hljs-keyword">export const</span> restaurantsLoaded = createAction(
+    <span class="hljs-built_in">'[RestaurantReviewing] Restaurants Loaded'</span>,
+    props<{ restaurants: Restaurant[] }>()
+);
+
+<span class="hljs-keyword">export const</span> loadRestaurantsFailure = createAction(
+    <span class="hljs-built_in">'[RestaurantReviewing] Load Restaurants Failure'</span>
+);      
+
+<span class="hljs-keyword">export const</span> savePrices = createAction(
+    <span class="hljs-built_in">'[RestaurantReviewing] Save Prices'</span>,
+    props<{ prices: number[] }>()
+);            
+
+<span class="hljs-string"># +state/restaurant-reviewing.reducer.ts</span> 
+
+<span class="hljs-keyword">import</span> { Action, createReducer, on } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+<span class="hljs-keyword">import</span> * as RestaurantReviewingActions <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./restaurant-reviewing.actions'</span>;
+
+<span class="hljs-keyword">import const</span> restaurantReviewingFeatureKey = <span class="hljs-built_in">'restaurantReviewing'</span>;
+
+<span class="hljs-keyword">export interface</span> State {
+    restaurants: Restaurant[];
+    isLoading: boolean;
+    prices: number[];
+}
+
+<span class="hljs-keyword">export const</span> initialState: State = {
+    restaurants: [],
+    isLoading: <span class="hljs-keyword">false</span>,
+    prices: []
+};
+
+<span class="hljs-keyword">export const</span> reducer = createReducer(
+  initialState,
+  
+  <span class="hljs-meta">on</span>(RestaurantReviewingActions.loadRestaurants, state => ({...state, isLoading: <span class="hljs-keyword">true</span>})),
+
+  <span class="hljs-meta">on</span>(RestaurantReviewingActions.restaurantsLoaded, (state, action) => ({...state, restaurants: action.restaurants, isLoading: <span class="hljs-keyword">false</span>})),
+  
+  <span class="hljs-meta">on</span>(RestaurantReviewingActions.loadRestaurantsFailure, state => ({...state, isLoading: <span class="hljs-keyword">false</span>})),
+
+  <span class="hljs-meta">on</span>(RestaurantReviewingActions.loadRestaurantsFailure, (state, action) => ({...state, prices: action.prices})),
+);
+
+<span class="hljs-string"># +state/restaurant-reviewing.selectors.ts</span> 
+
+<span class="hljs-keyword">import</span> { createFeatureSelector, createSelector } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+<span class="hljs-keyword">import * as</span> fromRestaurantReviewing <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./restaurant-reviewing.reducer'</span>;
+
+<span class="hljs-keyword">export const</span> selectRestaurantReviewingState = createFeatureSelector<fromRestaurantReviewing.State>(
+  fromRestaurantReviewing.restaurantReviewingFeatureKey
+);
+
+<span class="hljs-keyword">export const</span> selectRestaurants = createSelector(
+  selectRestaurantReviewingState,
+  state <span class="hljs-function">=&gt;</span> state.restaurants
+);
+
+<span class="hljs-keyword">export const</span> selectPrices = createSelector(
+  selectRestaurantReviewingState,
+  state <span class="hljs-function">=&gt;</span> state.prices
+);
+
+</code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            Dans la méthode <code>dispatchSelectedPrices(prices: number[]){...}</code>, ajoutez l'appel
+                            à l'<i>action</i> permettant de sauver la <i>variable</i> <code>prices</code> dans le
+                            <code>Store</code>.
+                        </p>
+
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+dispatchSelectedPrices(prices: number[]) {
+    <span class="hljs-built_in">this</span>.store.dispatch(fromRestaurantReviewing.savePrices({ prices }));
+}
+                            
+                        </code></pre>
+                            </p>
+                        </details>
+                    </li>
+                    <li>
+                        <p>
+                            Enfin, dans le fichier <code>+state/restaurant-reviewing.selectors.ts</code>, ajoutez un
+                            <i>selector</i> <code>selectFilteredRestaurants</code> qui combine les <i>selectors</i>
+                            <code>selectRestaurants</code> et <code>selectPrices</code> pour filtrer les
+                            <i>restaurants</i> et ne garder que ceux qui correspondent aux <code>prices</code>
+                            sélectionnés.
+                        </p>
+
+                        <details>
+                            <summary>Solution</summary>
+                            <p>
+                            <pre><code class="language-typescript">
+<span class="hljs-string"># +state/restaurant-reviewing.selectors.ts</span> 
+
+<span class="hljs-keyword">import</span> { createFeatureSelector, createSelector } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+<span class="hljs-keyword">import * as</span> fromRestaurantReviewing <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./restaurant-reviewing.reducer'</span>;
+
+<span class="hljs-keyword">export const</span> selectRestaurantReviewingState = createFeatureSelector<fromRestaurantReviewing.State>(
+    fromRestaurantReviewing.restaurantReviewingFeatureKey
+);
+
+<span class="hljs-keyword">export const</span> selectRestaurants = createSelector(
+    selectRestaurantReviewingState,
+    state <span class="hljs-function">=&gt;</span> state.restaurants
+);
+
+<span class="hljs-keyword">export const</span> selectPrices = createSelector(
+    selectRestaurantReviewingState,
+    state <span class="hljs-function">=&gt;</span> state.prices
+);
+
+<span class="hljs-keyword">export const</span> selectFilteredRestaurants = createSelector(
+    selectRestaurants,
+    selectPrices,
+    (restaurants, prices) <span class="hljs-function">=&gt;</span> prices.length <span class="hljs-keyword">?</span> restaurants.filter(restaurant <span class="hljs-function">=&gt;</span> prices.includes(restaurant.price)) <span class="hljs-keyword">:</span> restaurants
+);
+
+<span class="hljs-string"># /restaurant-search/restaurant-search.component.ts</span> 
+
+<span class="hljs-keyword">import</span> { Component, OnInit } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/core'</span>;
+<span class="hljs-keyword">import</span> { BehaviorSubject, EMPTY, Observable, of } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'rxjs'</span>;
+<span class="hljs-keyword">import</span> { Restaurant } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'../models/restaurant'</span>;
+<span class="hljs-keyword">import * as</span> fromRestaurantReviewing <span class="hljs-keyword">from</span> <span class="hljs-built_in">'../+state'</span>;
+<span class="hljs-keyword">import</span> { Store } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@ngrx/store'</span>;
+<span class="hljs-keyword">import</span> { selectIsLoading, selectRestaurants } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'../+state'</span>;
+
+<span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-built_in">'tks-restaurant-search'</span>,
+  templateUrl: <span class="hljs-built_in">'./restaurant-search.component.html'</span>,
+  styleUrls: [<span class="hljs-built_in">'./restaurant-search.component.css'</span>],
+})
+<span class="hljs-keyword">export class</span> RestaurantSearchComponent <span class="hljs-keyword">implements</span> OnInit {
+    restaurants$: Observable&lt;Restaurant[]&gt; = of([]);
+    search = <span class="hljs-built_in">''</span>;
+    urgent = <span class="hljs-keyword">false</span>;
+    isLoading$ = <span class="hljs-keyword">new</span> BehaviorSubject&lt;boolean&gt;(<span class="hljs-keyword">false</span>);
+    search$ = <span class="hljs-keyword">new</span> BehaviorSubject&lt;string&gt;(<span class="hljs-built_in">''</span>);
+    
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-keyword">private</span> restaurantSearchService: RestaurantSearchService,
+    <span class="hljs-keyword">private</span> store: Store&lt;fromRestaurantReviewing.State&gt;) { }
+    
+    ngOnInit(): void {
+        <span class="hljs-built_in">this</span>.isLoading$ = <span class="hljs-built_in">this</span>.store.select(selectIsLoading);
+        <span class="hljs-built_in">this</span>.restaurants$ = <span class="hljs-built_in">this</span>.store.select(selectFilteredRestaurants);
+
+        <span class="hljs-built_in">this</span>.dispatchSearch();
+    }
+    
+    dispatchSearch() {
+        <span class="hljs-built_in">this</span>.search$.next(<span class="hljs-built_in">this</span>.search);
+    }
+
+    dispatchSelectedPrices(prices: number[]) {
+        <span class="hljs-built_in">this</span>.store.dispatch(fromRestaurantReviewing.savePrices({ prices }));
+    }
+}             
+                            
+                        </code></pre>
+                            </p>
+                        </details>
+                    </li>
                 </ol>
             </article>
         </section>
