@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Formation Angular expert by Kaizen - Sylvain DEDIEU</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="Description">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs/styles/atom-one-light.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="./style/style.css">
+
+</head>
+
+<body class="ready">
+
+    <main>
+        <aside class="sidebar">
+            <div class="sidebar-nav">
+                <p>&nbsp;</p>
+                <ul>
+                    <li><a href="index.html">Accueil</a></li>
+                    <li><a href="00_getting_started.html">Pour commencer</a></li>
+                    <li><a href="01_libs_and_monorepo.html">Libs et Monorepos</a></li>
+                    <li><a href="02_module_federation.html">Microfrontends avec Module Federation</a></li>
+                    <li><a href="03_ngrx.html">NGRX Store</a></li>
+                    <li><a href="04_ngrx_entities.html">NGRX Entities</a></li>
+                    <li><a class="disabled" disabled>Composants Standalone</a></li>
+                    <li><a class="disabled" disabled>Performances</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <section class="content">
+            <article class="markdown-section" id="main">
+
+                <h1 id="ngrx-entities">NGRX Entities</h1>
+
+                <ul>
+                    <li><a href="#ngrx-entities">NGRX Entities</a>
+                        <ul>
+                            <li><a href="#managing-hotels">Gestion des hotels</a>
+                            <li><a href="#hotal-loading">Chargement des hotels</a>
+                        </ul>
+                    </li>
+                </ul>
+                <h2 id="managing-hotels">Gestion des hotels</h2>
+                <p>
+                    Dans ce TP, nous allons utiliser <code>@ngrx/entities</code> pour gérer les <i>hotels</i>.
+                </p>
+                <p>
+                    Vous pouvez suivre ces étapes :
+                </p>
+                <ol>
+                    <li>
+                        <p>
+                            Installer la librairie
+                        </p>
+                        <p>
+                            A la racine du monorepo, lancez la commande suivantes:<br>
+                            <code>npm install --save @ngrx/entity</code>
+                        </p>
+                        <p>
+                            Si vous <strong>n'avez pas</strong> suivi le TP <a href="03_ngrx.html">NGRX Store</a>,
+                            lancez également les commandes suivantes:<br>
+                            <code>npm install --save @ngrx/store @ngrx/effects</code><br>
+                            <code>npm install @ngrx/schematics @ngrx/store-devtools --save-dev</code>
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Placez vous dans le répertoire <code>apps/hotel/src/app/</code> et lancez la commande:<br>
+                            <code>ng generate @ngrx/schematics:store HotelState --root --statePath=+state --module=app.module.ts --project=hotel</code>
+                        </p>
+                        <p>Importez également le <code>EffectsModule</code> dans la liste des <code>imports</code> du
+                            <code>AppModule</code>.
+                        </p>
+                        <pre><code class="language-typescript"><span class="hljs-keyword">import</span> { EffectsModule } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ngrx/effects&#x27;</span>;
+
+[...]
+
+imports: [
+    [...],
+    EffectsModule.forRoot([])
+];
+</code></pre>
+                    </li>
+                    <li>
+                        <p>
+                            Utilisez <code>@ngrx/schematics </code> pour générer l'entité
+                        </p>
+                        <p>
+                            Placez vous dans le dossier <code>libs/hotel-search-lib/src/lib</code> et lancez la
+                            commande:<br>
+                            <code>ng g @ngrx/schematics:entity Hotel --flat false --module hotel-search-lib.module.ts --creators</code>
+                        </p>
+                        <p>
+                            Supprimez le fichier créé <code>hotel/hotel.model.ts</code>
+                        </p>
+                        <p>
+                            Dans les autres fichiers générés, remplacez l'import <code
+                                class="language-typescript"><span class="hljs-keyword">import</span> { Hotel } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./hotel.model';</span></code>
+                            par <code
+                                class="language-typescript"><span class="hljs-keyword">import</span> { Hotel } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'../models/hotel';</span></code>
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Prenez le temps d'observer les fichiers générés.
+                        </p>
+                    <li>
+                        <p>
+                            Changer l'implémentation actuelle du <code>hotel-search.component.ts</code> pour qu'il utilise le <code>Store</code>
+                        </p>
+                        <p>
+                            Commencez par observer la façon dont est réalisé le chargement des <i>hotels</i> en <i>infinite scrolling</i>
+                        </p>
+                        <p>
+                            Créez un fichier <code>hotel/hotel.effects.ts</code> et implémentez le <i>lazy-load</i> coté <i>effects</i> en vous aidans de la méthode <code>addHotels</code> du <code>hotel.reducer.ts</code>.
+                        </p>
+                        <p>
+                            Créez un fichier <code>hotel/hotel.selectors.ts</code> et implémentez la récupération des <i>hotels</i> depuis le <code>State</code>.
+                        </p>
+                    </li>
+            </article>
+        </section>
+    </main>
+</body>
+
+</html>
