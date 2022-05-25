@@ -445,13 +445,15 @@ bootstrapApplication(AppComponent, {
                 <p>
                     L'objectif de cette partie de TP va être de transformer les <i>composants</i>
                     <code>SideNavComponent</code> et <code>NavLinkComponent</code> en <i>composants standalones</i>.
-                    Une fois cela fait, le <code>SideNavModule</code> n'aura plus lieu d'être et le <code>SideNavComponent</code> pourra être importé seul dans le <code>AppComponent</code>.
+                    Une fois cela fait, le <code>SideNavModule</code> n'aura plus lieu d'être et le
+                    <code>SideNavComponent</code> pourra être importé seul dans le <code>AppComponent</code>.
                 </p>
                 <ol>
                     <li>
                         <p>
                             Ce coup ci, nous allons commencer par la fin.<br>
-                            Importez le <code>SideNavComponent</code> à la place du <code>SideNavModule</code> dans le <code>AppComponent</code>.
+                            Importez le <code>SideNavComponent</code> à la place du <code>SideNavModule</code> dans le
+                            <code>AppComponent</code>.
                         </p>
                         <details>
                             <summary>Solution</summary>
@@ -513,64 +515,92 @@ bootstrapApplication(AppComponent, {
         </code></pre>
                         </p>
                         <p>
-                            Une fois que le <code>SideNavComponent</code> et le <code>NavLinkComponent</code> auront été migré en <i>standalone</i>, cette erreur disparaîtra.
+                            Une fois que le <code>SideNavComponent</code> et le <code>NavLinkComponent</code> auront été
+                            migré en <i>standalone</i>, cette erreur disparaîtra.
                         </p>
                     </li>
                     <li>
                         <p>
-                            Réalisez les travaux de migration du <code>SideNavComponent</code> et du <code>NavLinkComponent</code>, pour qu'ils soient <i>standalones</i>, et supprimez le <code>SideNavModule</code>.
-                       <br>
-                       <strong>Note:</strong> Le <code>NavLinkComponent</code> doit être importé dans le <code>SideNavComponent</code>.
+                            Réalisez les travaux de migration du <code>SideNavComponent</code> et du
+                            <code>NavLinkComponent</code>, pour qu'ils soient <i>standalones</i>, et supprimez le
+                            <code>SideNavModule</code>.
+                            <br>
+                            <strong>Note:</strong> Le <code>NavLinkComponent</code> doit être importé dans le
+                            <code>SideNavComponent</code>.
                         </p>
                         <details>
                             <summary>Solution</summary>
                             <p>
                             <pre><span class="language-typescript">
-<span class="hljs-keyword">import</span> { HttpClientModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/common/http'</span>;
-<span class="hljs-keyword">import</span> { Component, OnInit } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/core'</span>;
-<span class="hljs-keyword">import</span> { MatButtonModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/material/button'</span>;
-<span class="hljs-keyword">import</span> { MatIconModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/material/icon'</span>;
-<span class="hljs-keyword">import</span> { MatListModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/material/list'</span>;
-<span class="hljs-keyword">import</span> { MatToolbarModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/material/toolbar'</span>;
-<span class="hljs-keyword">import</span> { BrowserModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/platform-browser'</span>;
-<span class="hljs-keyword">import</span> { BrowserAnimationsModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/platform-browser/animations'</span>;
-<span class="hljs-keyword">import</span> { RouterModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/router'</span>;
-<span class="hljs-keyword">import</span> { SharedLibModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@trip-kaizen-sor-workspace/shared-lib'</span>;
-<span class="hljs-keyword">import</span> { APP_ROUTES } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./routes'</span>;
-<span class="hljs-keyword">import</span> { NavLinkComponent } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./side-nav/nav-link/nav-link.component'</span>;
-<span class="hljs-keyword">import</span> { SideNavComponent } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./side-nav/side-nav.component'</span>;
+<span class="hljs-string"># apps/trip-kaizen-sor/src/app/side-nav/side-nav.component.ts</span> 
+
+<span class="hljs-keyword">import</span> { CommonModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/common'</span> ;
+<span class="hljs-keyword">import</span> { Component, OnInit } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/core'</span> ;
+<span class="hljs-keyword">import</span> { MatListModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/material/list'</span> ;
+<span class="hljs-keyword">import</span> { NavLink, NavLinkComponent } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./nav-link/nav-link.component'</span> ;
 
 <span class="hljs-meta">@Component</span>({
-  selector: <span class="hljs-built_in">'tks-root'</span>,
+  selector: <span class="hljs-built_in">'tks-side-nav'</span>,
   standalone: <span class="hljs-literal">true</span>,
-  declarations: [
-    SideNavComponent, NavLinkComponent
-  ],
   imports: [
-    BrowserModule,
-    HttpClientModule,
-    MatToolbarModule,
-    <span class="hljs-keyword">SideNavComponent</span>,
-    MatIconModule,
+    CommonModule,
     MatListModule,
-    MatButtonModule,
-    SharedLibModule
-  ],
-  templateUrl: <span class="hljs-built_in">'./app.component.html'</span>,
-  styleUrls: [<span class="hljs-built_in">'./app.component.css'</span>],
+    NavLinkComponent
+],
+  templateUrl: <span class="hljs-built_in">'./side-nav.component.html'</span>,
+  styleUrls: [<span class="hljs-built_in">'./side-nav.component.css'</span>],
 })
-<span class="hljs-keyword">export class</span> AppComponent <span class="hljs-keyword">implements</span> OnInit {
-  small!: <span class="hljs-literal">boolean</span>; 
+<span class="hljs-keyword">export class</span> SideNavComponent <span class="hljs-keyword">implements</span> OnInit {
 
-  <span class="hljs-keyword">constructor</span>() {
-    <span class="hljs-built_in">this</span>.small = <span class="hljs-built_in">window</span>.innerWidth &lt; 600;
+  navItems: NavLink[] = [
+    {
+      name: <span class="hljs-built_in">'Home'</span>,
+      link: <span class="hljs-built_in">'/home'</span>,
+      icon: <span class="hljs-built_in">'home'</span>,
+    },
+    {
+      name: <span class="hljs-built_in">'Restaurants'</span>,
+      link: <span class="hljs-built_in">'/restaurants'</span>,
+      icon: <span class="hljs-built_in">'restaurant'</span>,
+    }
+  ];
+
+  <span class="hljs-keyword">constructor</span>() {}
+
+  ngOnInit(): void {}
+}
+
+<span class="hljs-string"># apps/trip-kaizen-sor/src/app/side-nav/nav-link/nav-link.component.ts</span> 
+
+<span class="hljs-keyword">import</span> { Component, OnInit, Input } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/core'</span> ;
+<span class="hljs-keyword">import</span> { MatIconModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/material/icon'</span>;
+<span class="hljs-keyword">import</span> { MatListModule } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'@angular/material/list'</span> ;
+<span class="hljs-keyword">import</span> { NavLink, NavLinkComponent } <span class="hljs-keyword">from</span> <span class="hljs-built_in">'./nav-link/nav-link.component'</span> ;
+
+<span class="hljs-keyword">export interface</span> NavLink {
+    name: string;
+    link: string;
+    icon: string;
   }
 
-  ngOnInit(): void {
-    <span class="hljs-built_in">window</span>.onresize = () => {
-        <span class="hljs-built_in">this</span>.small = <span class="hljs-built_in">window</span>.innerWidth &lt; 600;
-    };
-  }
+<span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-built_in">'tks-nav-link'</span>,
+  standalone: <span class="hljs-literal">true</span>,
+  imports: [
+    RouterModule,
+    MatListModule,
+    MatIconModule
+],
+  templateUrl: <span class="hljs-built_in">'./nav-link.component.html'</span>,
+  styleUrls: [<span class="hljs-built_in">'./nav-link.component.css'</span>],
+})
+<span class="hljs-keyword">export class</span> NavLinkComponent <span class="hljs-keyword">implements</span> OnInit {
+
+    <span class="hljs-meta">@Input</span>() navLink!: NavLink;
+
+    <span class="hljs-keyword">constructor</span>() {}
+  
+    ngOnInit(): void {}    
 }
 
 </code></pre>
@@ -579,6 +609,19 @@ bootstrapApplication(AppComponent, {
                     </li>
                 </ol>
                 <h2 id="routing-standalone">Routing et @Component standalone</h2>
+                <p>
+                    Cette dernière partie sur les <i>standalone components</i> a pour but de changer un <i>lazy
+                        loaded</i> <code>@ngModule</code> via le <i>routing</i> Angular, à un <i>lazy loaded
+                        standalone</i> <code>@Component</code>.
+                </p>
+                <p>
+                    Migrez le <i>composant</i> <code>RestaurantReviewingComponent</code> en <i>standalone</i>
+                </p>
+                <p>
+                    <strong>Note:</strong> le <i>type</i> <code>Route</code> (du <code>"@angular/router"</code>),
+                    possède l'attibut <code>providers</code> qui permet de définir des <i>providers</i> à injecter dans
+                    le <i>composant</i> <code>RestaurantReviewingComponent</code>.
+                </p>
             </article>
         </section>
     </main>
