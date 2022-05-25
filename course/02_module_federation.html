@@ -29,8 +29,8 @@
                     <li><a href="02_module_federation.html">Microfrontends avec Module Federation</a></li>
                     <li><a href="03_ngrx.html">NGRX Store</a></li>
                     <li><a href="04_ngrx_entities.html">NGRX Entities</a></li>
-                    <li><a class="disabled" disabled>Composants Standalone</a></li>
-                    <li><a class="disabled" disabled>Performances</a></li>
+                    <li><a href="05_standalone_components.html">Composants Standalone</a></li>
+                    <li><a href="06_performances.html">Performances</a></li>
                 </ul>
             </div>
         </aside>
@@ -157,10 +157,10 @@ plugins: [
         <span class="hljs-string">// },</span>
 
         shared: share({
-            <span class="hljs-built_in">"@angular/core"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
-            <span class="hljs-built_in">"@angular/common"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
-            <span class="hljs-built_in">"@angular/common/http"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
-            <span class="hljs-built_in">"@angular/router"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> },
+            <span class="hljs-built_in">"@angular/core"</span>: { singleton: <span class="hljs-literal">true</span>, strictVersion: <span class="hljs-literal">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
+            <span class="hljs-built_in">"@angular/common"</span>: { singleton: <span class="hljs-literal">true</span>, strictVersion: <span class="hljs-literal">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
+            <span class="hljs-built_in">"@angular/common/http"</span>: { singleton: <span class="hljs-literal">true</span>, strictVersion: <span class="hljs-literal">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
+            <span class="hljs-built_in">"@angular/router"</span>: { singleton: <span class="hljs-literal">true</span>, strictVersion: <span class="hljs-literal">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> },
 
         ...sharedMappings.getDescriptors()
         })
@@ -228,10 +228,10 @@ var moduleMap = {
             },
     
             shared: share({
-                <span class="hljs-built_in">"@angular/core"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
-                <span class="hljs-built_in">"@angular/common"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
-                <span class="hljs-built_in">"@angular/common/http"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
-                <span class="hljs-built_in">"@angular/router"</span>: { singleton: <span class="hljs-keyword">true</span>, strictVersion: <span class="hljs-keyword">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> },
+                <span class="hljs-built_in">"@angular/core"</span>: { singleton: <span class="hljs-literal">true</span>, strictVersion: <span class="hljs-literal">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
+                <span class="hljs-built_in">"@angular/common"</span>: { singleton: <span class="hljs-literal">true</span>, strictVersion: <span class="hljs-literal">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
+                <span class="hljs-built_in">"@angular/common/http"</span>: { singleton: <span class="hljs-literal">true</span>, strictVersion: <span class="hljs-literal">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> }, 
+                <span class="hljs-built_in">"@angular/router"</span>: { singleton: <span class="hljs-literal">true</span>, strictVersion: <span class="hljs-literal">true</span>, requiredVersion: <span class="hljs-built_in">'auto'</span> },
     
             ...sharedMappings.getDescriptors()
             })

@@ -29,8 +29,8 @@
                     <li><a href="02_module_federation.html">Microfrontends avec Module Federation</a></li>
                     <li><a href="03_ngrx.html">NGRX Store</a></li>
                     <li><a href="04_ngrx_entities.html">NGRX Entities</a></li>
-                    <li><a class="disabled" disabled>Composants Standalone</a></li>
-                    <li><a class="disabled" disabled>Performances</a></li>
+                    <li><a href="05_standalone_components.html">Composants Standalone</a></li>
+                    <li><a href="06_performances.html">Performances</a></li>
                 </ul>
             </div>
         </aside>
@@ -114,16 +114,21 @@ imports: [
                         </p>
                     <li>
                         <p>
-                            Changer l'implémentation actuelle du <code>hotel-search.component.ts</code> pour qu'il utilise le <code>Store</code>
+                            Changer l'implémentation actuelle du <code>hotel-search.component.ts</code> pour qu'il
+                            utilise le <code>Store</code>
                         </p>
                         <p>
-                            Commencez par observer la façon dont est réalisé le chargement des <i>hotels</i> en <i>infinite scrolling</i>
+                            Commencez par observer la façon dont est réalisé le chargement des <i>hotels</i> en
+                            <i>infinite scrolling</i>
                         </p>
                         <p>
-                            Créez un fichier <code>hotel/hotel.effects.ts</code> et implémentez le <i>lazy-load</i> coté <i>effects</i> en vous aidans de la méthode <code>addHotels</code> du <code>hotel.reducer.ts</code>.
+                            Créez un fichier <code>hotel/hotel.effects.ts</code> et implémentez le <i>lazy-load</i> coté
+                            <i>effects</i> en vous aidans de la méthode <code>addHotels</code> du
+                            <code>hotel.reducer.ts</code>.
                         </p>
                         <p>
-                            Créez un fichier <code>hotel/hotel.selectors.ts</code> et implémentez la récupération des <i>hotels</i> depuis le <code>State</code>.
+                            Créez un fichier <code>hotel/hotel.selectors.ts</code> et implémentez la récupération des
+                            <i>hotels</i> depuis le <code>State</code>.
                         </p>
                     </li>
             </article>
