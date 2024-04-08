@@ -1,5 +1,5 @@
 # Docs
 
-This repository is the official documentation for the Kaizen Solutions Angular advanced course.
+This repository is the official documentation for the Sylvain DEDIEU Angular advanced course.
 
-**The content is the property of Kaizen Solutions, do not copy or share it without permission.**
+**The content is the property of Sylvain DEDIEU, do not copy or share it without permission.**
